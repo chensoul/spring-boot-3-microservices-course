@@ -1,6 +1,5 @@
-package java.com.techie.microservices.inventory;
+package com.techie.microservices.inventory;
 
-import com.techie.microservices.inventory.InventoryServiceApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -14,7 +13,7 @@ public class TestInventoryServiceApplication {
 	@Bean
 	@ServiceConnection
 	MySQLContainer<?> mysqlContainer() {
-		return new MySQLContainer<>(DockerImageName.parse("mysql:latest"));
+		return new MySQLContainer<>(DockerImageName.parse("mysql:8"));
 	}
 
 	public static void main(String[] args) {

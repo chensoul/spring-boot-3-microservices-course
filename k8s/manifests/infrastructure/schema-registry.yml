@@ -15,12 +15,12 @@ spec:
       enableServiceLinks: false
       containers:
         - name: schema-registry
-          image: confluentinc/cp-schema-registry:7.5.0
+          image: confluentinc/cp-schema-registry
           env:
             - name: SCHEMA_REGISTRY_HOST_NAME
               value: schema-registry
             - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
-              value: 'broker:29092'
+              value: 'kafka:29092'
             - name: SCHEMA_REGISTRY_LISTENERS
               value: http://0.0.0.0:8081
           ports:

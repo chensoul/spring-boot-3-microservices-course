@@ -1,56 +1,89 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.4</version>
-    <relativePath/> <!-- lookup parent from repository -->
-  </parent>
-  <groupId>com.programming.techie</groupId>
-  <artifactId>spring-boot-3-microservices</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-
-  <name>spring-boot-3-microservices</name>
-  <modules>
-    <module>api-gateway</module>
-    <module>product-service</module>
-    <module>order-service</module>
-    <module>inventory-service</module>
-    <module>notification-service</module>
-  </modules>
-
-  <properties>
-    <java.version>21</java.version>
-    <spring-cloud.version>2023.0.1</spring-cloud.version>
-    <dockerPassword>${dockerPassword}</dockerPassword>
-  </properties>
-  <build>
-    <plugins>
-      <plugin>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <image>
-            <name>saiupadhyayula007/new-${project.artifactId}</name>
-            <builder>dashaun/builder:tiny</builder>
-            <publish>true</publish>
-          </image>
-          <docker>
-            <publishRegistry>
-              <username>saiupadhyayula007</username>
-              <password>${dockerPassword}</password>
-            </publishRegistry>
-          </docker>
-          <excludes>
-            <exclude>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-            </exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.4</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.programming.techie</groupId>
+    <artifactId>spring-boot-3-microservices</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>spring-boot-3-microservices</name>
+
+    <modules>
+        <module>api-gateway</module>
+        <module>product-service</module>
+        <module>order-service</module>
+        <module>inventory-service</module>
+        <module>notification-service</module>
+    </modules>
+
+    <properties>
+        <java.version>21</java.version>
+        <spring-cloud.version>2023.0.1</spring-cloud.version>
+        <!--        <dockerPassword>123</dockerPassword>-->
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!--                    <image>-->
+                    <!--                        <name>chensoul/new-${project.artifactId}</name>-->
+                    <!--                        <builder>dashaun/builder:tiny</builder>-->
+                    <!--                        <publish>true</publish>-->
+                    <!--                    </image>-->
+                    <!--                    <docker>-->
+                    <!--                        <publishRegistry>-->
+                    <!--                            <username>chensoul</username>-->
+                    <!--                            <password>${dockerPassword}</password>-->
+                    <!--                        </publishRegistry>-->
+                    <!--                    </docker>-->
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <!-- 3.4.3 error: The configured platforms don't match the Docker Engine's OS and architecture (linux/arm64) -->
+                <version>3.4.2</version>
+                <configuration>
+                    <from>
+                        <image>eclipse-temurin:21-jre</image>
+                    </from>
+                    <to>
+                        <image>chensoul/new-${project.artifactId}</image>
+                    </to>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>dockerBuild</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

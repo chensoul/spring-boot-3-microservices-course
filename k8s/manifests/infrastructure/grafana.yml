@@ -14,24 +14,19 @@ spec:
     spec:
       containers:
         - name: grafana
-          image: grafana/grafana:10.1.0
+          image: grafana/grafana
           ports:
             - containerPort: 3000
           env:
-            - name: GF_AUTH_ANONYMOUS_ENABLED
+            - name: GF_SECURITY_ADMIN_USER
               valueFrom:
                 configMapKeyRef:
-                  key: GF_AUTH_ANONYMOUS_ENABLED
+                  key: GF_SECURITY_ADMIN_USER
                   name: grafana-configmap
-            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+            - name: GF_SECURITY_ADMIN_PASSWORD
               valueFrom:
                 configMapKeyRef:
-                  key: GF_AUTH_ANONYMOUS_ORG_ROLE
-                  name: grafana-configmap
-            - name: GF_AUTH_DISABLE_LOGIN_FORM
-              valueFrom:
-                configMapKeyRef:
-                  key: GF_AUTH_DISABLE_LOGIN_FORM
+                  key: GF_SECURITY_ADMIN_PASSWORD
                   name: grafana-configmap
           volumeMounts:
             - name: grafana-config
@@ -58,12 +53,10 @@ kind: ConfigMap
 metadata:
   name: grafana-configmap
 data:
-  GF_AUTH_ANONYMOUS_ENABLED: "true"
-  GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
-  GF_AUTH_DISABLE_LOGIN_FORM: "true"
+  GF_SECURITY_ADMIN_USER: "admin"
+  GF_SECURITY_ADMIN_PASSWORD: "password"
   datasource.yml: |
     apiVersion: 1
-    
     datasources:
       - name: Prometheus
         type: prometheus
