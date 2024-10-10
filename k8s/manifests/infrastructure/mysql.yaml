@@ -23,7 +23,7 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: mysql_root_password
+                  key: MYSQL_ROOT_PASSWORD
                   name: mysql-secrets
           volumeMounts:
             - mountPath: /var/lib/mysql
@@ -51,10 +51,11 @@ spec:
       targetPort: 3306
   selector:
     app: mysql
+
 ---
 apiVersion: v1
 data:
-  mysql_root_password: bXlzcWw=
+  MYSQL_ROOT_PASSWORD: bXlzcWw=
 kind: Secret
 metadata:
   name: mysql-secrets

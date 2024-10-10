@@ -34,7 +34,16 @@ The technologies used in this project are:
 Run the following command to build and package the backend services into a docker container
 
 ```shell
-mvn spring-boot:build-image -DdockerPassword=<your-docker-account-password>
+mvn spring-boot:build-image -DskipTests
+```
+
+If you want to push the docker images to your docker hub account, you can use the following command.
+
+```shell
+mvn spring-boot:build-image -DskipTests \
+  -Ddocker.publishRegistry.username=user \
+  -Ddocker.publishRegistry.password=secret \
+  -Dspring-boot.build-image.publish=true 
 ```
 
 The above command will build and package the services into a docker container and push it to your docker hub account.
@@ -63,7 +72,7 @@ downloading the images when you deploy the application.
 Run the k8s/manisfests/infrastructure.yaml file to deploy the infrastructure
 
 ```shell
-kubectl apply -f k8s/manifests/infrastructure.yaml
+kubectl apply -f k8s/manifests/infrastructure
 ```
 
 ### Deploy the services
@@ -71,7 +80,7 @@ kubectl apply -f k8s/manifests/infrastructure.yaml
 Run the k8s/manifests/applications.yaml file to deploy the services
 
 ```shell
-kubectl apply -f k8s/manifests/applications.yaml
+kubectl apply -f k8s/manifests/applications
 ```
 
 ### Access the API Gateway

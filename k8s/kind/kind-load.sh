@@ -9,6 +9,7 @@ docker pull grafana/loki:main
 docker pull grafana/tempo
 docker pull grafana/grafana
 docker pull chensoul/new-api-gateway:latest
+docker pull chensoul/new-authrization:latest
 docker pull chensoul/new-product-service:latest
 docker pull chensoul/new-order-service:latest
 docker pull chensoul/new-inventory-service:latest
@@ -25,6 +26,7 @@ kind load docker-image -n microservices grafana/loki:main
 kind load docker-image -n microservices grafana/tempo
 kind load docker-image -n microservices grafana/grafana
 kind load docker-image -n microservices chensoul/new-api-gateway:latest
+kind load docker-image -n microservices chensoul/new-authrization:latest
 kind load docker-image -n microservices chensoul/new-product-service:latest
 kind load docker-image -n microservices chensoul/new-order-service:latest
 kind load docker-image -n microservices chensoul/new-inventory-service:latest

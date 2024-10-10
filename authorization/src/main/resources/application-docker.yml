@@ -1,0 +1,3 @@
+app.eureka: eureka
+app.zipkin: zipkin
+app.authorization: authorization

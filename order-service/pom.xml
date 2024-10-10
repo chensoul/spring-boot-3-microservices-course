@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.programming.techie</groupId>
-        <artifactId>spring-boot-3-microservices</artifactId>
+        <artifactId>spring-boot-3-microservices-course</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
