@@ -1,0 +1,54 @@
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml -ntp -B -U"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+    - target
+
+stages:
+  - build
+  - deploy
+  - test
+
+build:
+  stage: build
+  image: maven:3.9.8-eclipse-temurin-21
+  tags:
+    - docker
+  script:
+    - mvn package
+
+deploy_jar:
+  stage: deploy
+  image: maven:3.9.8-eclipse-temurin-21
+  tags:
+    - docker
+  script:
+    # https://software.rcc.uchicago.edu/git/help/ci/examples/artifactory_and_gitlab/index.md
+    - mvn $MAVEN_CLI_OPTS deploy -DskipTests -DOSSRH_USERNAME=${OSSRH_USERNAME} -DOSSRH_TOKEN=${OSSRH_TOKEN}
+  artifacts:
+    paths:
+      - target/*.jar
+
+deploy_image:
+  stage: deploy
+  #  rules:
+  #    - if: '$CI_COMMIT_TAG'
+  tags:
+    - docker
+  before_script:
+    - docker login -u "$DOCKER_USERNAME" -p $DOCKER_PASSWORD
+  script:
+    - docker build -t $DOCKER_USERNAME/$CI_PROJECT_NAME:latest -t $DOCKER_USERNAME/$CI_PROJECT_NAME:$CI_COMMIT_SHA -f Dockerfile.maven .
+#    - docker push $DOCKER_USERNAME/$CI_PROJECT_NAME:latest
+#    - docker push $DOCKER_USERNAME/$CI_PROJECT_NAME:$CI_COMMIT_SHA
+
+test:
+  stage: test
+  tags:
+    - docker
+  script:
+    - docker pull $DOCKER_USERNAME/$CI_PROJECT_NAME:latest
+#    - docker run $DOCKER_USERNAME/$CI_PROJECT_NAME:latest

@@ -1,0 +1,237 @@
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  sonarqube:
+    image: sonarqube:10.6-community
+    restart: always
+    ports:
+      - "9000:9000"
+    #        environment:
+    #            # CREATE USER sonar WITH PASSWORD 'sonar';
+    #            # CREATE DATABASE sonar owner sonar;
+    #            # GRANT ALL ON SCHEMA public TO sonar;
+    #            - SONAR_JDBC_URL=jdbc:postgresql://postgresql:5432/sonar
+    #            - SONAR_JDBC_USERNAME=sonar
+    #            - SONAR_JDBC_PASSWORD=sonar
+    volumes:
+      - sonar_data:/opt/sonarqube
+
+  nexus:
+    image: sonatype/nexus3
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "8081:8081"
+    volumes:
+      - nexus_data:/nexus-data
+      - /etc/localtime:/etc/localtime:ro
+
+  selenium:
+    # selenium 需要 chrome 浏览器和 chromeDriver 版本一致
+    image: selenium/standalone-chrome:4.22.0-20240621
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "4444:4444"
+
+  yapi:
+    image: jayfong/yapi:latest
+    restart: always
+    platform: linux/amd64
+    environment:
+      - YAPI_ADMIN_ACCOUNT=admin@docker.yapi
+      - YAPI_ADMIN_PASSWORD=adm1n
+      - YAPI_CLOSE_REGISTER=true
+      - YAPI_DB_SERVERNAME=mongo
+      - YAPI_DB_PORT=27017
+      - YAPI_DB_DATABASE=yapi
+      - YAPI_MAIL_ENABLE=false
+      - YAPI_LDAP_LOGIN_ENABLE=false
+      - YAPI_PLUGINS=[]
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:7
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: yapi
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  jenkins:
+    image: jenkins/jenkins:jdk21
+    restart: always
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+
+  gitlab:
+    image: gitlab/gitlab-ce
+    restart: always
+    platform: linux/amd64
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.example.com'
+
+        gitlab_rails['time_zone'] = 'Asia/Shanghai'
+        gitlab_rails['gitlab_default_theme'] = 2
+        gitlab_rails['gitlab_shell_ssh_port'] = 24
+        gitlab_rails['backup_keep_time'] = 172800
+
+        gitlab_workhorse['listen_network'] = "tcp"
+        gitlab_workhorse['listen_addr'] = "0.0.0.0:8000"
+
+        nginx['enable'] = false
+        unicorn['enable'] = false
+    ports:
+      - '8000:8000'
+      - '24:22'
+    volumes:
+      - gitlab_data:/var/opt/gitlab
+      - /etc/localtime:/etc/localtime:ro
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner
+    restart: always
+    volumes:
+      - gitlab_runner_data:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+
+  pyroscope:
+    image: grafana/pyroscope
+    restart: always
+    ports:
+      - "4040:4040"
+
+  # https://elnatantorres.medium.com/configuring-rabbitmq-on-its-startup-with-docker-d219af4b751a
+  rabbitmq:
+    image: bitnami/rabbitmq:4.0.2
+    environment:
+      RABBITMQ_LOAD_DEFINITIONS: "true"
+      # definition is set with -> user: password
+      RABBITMQ_DEFINITIONS_FILE: /etc/rabbitmq/definitions.json
+      RABBITMQ_PLUGINS: rabbitmq_shovel rabbitmq_shovel_management rabbitmq_delayed_message_exchange
+      RABBITMQ_COMMUNITY_PLUGINS: https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/v3.12.0/rabbitmq_delayed_message_exchange-3.12.0.ez
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - ./docker/rabbitmq/rabbitmq-definition.json:/etc/rabbitmq/definitions.json
+      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq_data:/bitnami/rabbitmq/mnesia
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7
+    restart: always
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry
+    hostname: schema-registry
+    depends_on:
+      - kafka
+    ports:
+      - "8085:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka:29092'
+      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8086:8080"
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_NAME: local
+      KAFKA_CLUSTERS_BOOTSTRAPSERVERS: kafka:29092
+      #      KAFKA_CLUSTERS_SCHEMAREGISTRY: http://schema-registry:8081
+      DYNAMIC_CONFIG_ENABLED: 'true'
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+
+  prometheus:
+    image: prom/prometheus
+    restart: always
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana-oss
+    restart: always
+    ports:
+      - "3000:3000"
+    links:
+      - prometheus:prometheus
+    volumes:
+      - ./docker/grafana:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=pass
+
+volumes:
+  mysql_data:
+  sonar_data:
+  gitlab_data:
+  gitlab_runner_data:
+  jenkins_data:
+  nexus_data:
+  mongodb_data:
+  rabbitmq_data:
