@@ -31,5 +31,8 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/vendor
+
+logs
+
 LICENSE
 README.md
