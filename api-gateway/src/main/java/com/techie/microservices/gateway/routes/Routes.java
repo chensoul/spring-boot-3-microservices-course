@@ -41,7 +41,7 @@ public class Routes {
                 .route(RequestPredicates.path("/aggregate/product-service/v3/api-docs"), HandlerFunctions.http(productServiceUrl))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker("productServiceSwaggerCircuitBreaker",
                         URI.create("forward:/fallbackRoute")))
-                .filter(setPath("/api-docs"))
+                .filter(setPath("/v3/api-docs"))
                 .build();
     }
 
@@ -60,7 +60,7 @@ public class Routes {
                 .route(RequestPredicates.path("/aggregate/order-service/v3/api-docs"), HandlerFunctions.http(orderServiceUrl))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker("orderServiceSwaggerCircuitBreaker",
                         URI.create("forward:/fallbackRoute")))
-                .filter(setPath("/api-docs"))
+                .filter(setPath("/v3/api-docs"))
                 .build();
     }
 
@@ -79,7 +79,7 @@ public class Routes {
                 .route(RequestPredicates.path("/aggregate/inventory-service/v3/api-docs"), HandlerFunctions.http(inventoryServiceUrl))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker("inventoryServiceSwaggerCircuitBreaker",
                         URI.create("forward:/fallbackRoute")))
-                .filter(setPath("/api-docs"))
+                .filter(setPath("/v3/api-docs"))
                 .build();
     }
 
