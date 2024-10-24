@@ -1,0 +1,16 @@
+Index: .github/workflows/maven-build.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time\n# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven\n\nname: Java CI with Maven\n\non:\n  push:\n    branches: [ SB3.3.4 ]\n  pull_request:\n    branches: [ SB3.3.4 ]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    strategy:\n      matrix:\n        java: [ '21' ]\n\n    steps:\n      - uses: actions/checkout@v2\n      - name: Set up JDK ${{matrix.java}}\n        uses: actions/setup-java@v2\n        with:\n          java-version: ${{matrix.java}}\n          distribution: 'adopt'\n          cache: maven\n      - name: Build with Maven\n        run: mvn -B package --file pom.xml\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.github/workflows/maven-build.yml b/.github/workflows/maven-build.yml
+--- a/.github/workflows/maven-build.yml	(revision 9509b6f0d2f4b581c4892626c7465191a4df4a89)
++++ b/.github/workflows/maven-build.yml	(date 1729731274704)
+@@ -25,4 +25,4 @@
+           distribution: 'adopt'
+           cache: maven
+       - name: Build with Maven
+-        run: mvn -B package --file pom.xml
++        run: mvn -B package
