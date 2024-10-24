@@ -1,29 +1,39 @@
 services:
-  mongodb:
-    image: mongo:7
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
-      MONGO_INITDB_DATABASE: product_service
-    volumes:
-      - mongodb_data:/data/db
-
   mysql:
-    image: mysql:8
+    image: mysql:9.1
     environment:
-      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: microservices
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=pass --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
+  mongodb:
+    image: mongo:8.0.1
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: microservices
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb:/data/db
+    healthcheck:
+      test: "mongostat -n 1"
+      interval: 5s
+      timeout: 2s
+      retries: 10
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7
-    hostname: zookeeper
-    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:7.7.1
+    restart: always
     ports:
       - "2181:2181"
     environment:
@@ -31,21 +41,23 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: confluentinc/cp-kafka:7
+    image: confluentinc/cp-kafka:7.7.1
+    restart: always
     ports:
       - "9092:9092"
-      - "29092:29092"
     depends_on:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7
+    image: confluentinc/cp-schema-registry
     hostname: schema-registry
     depends_on:
       - kafka
@@ -69,49 +81,6 @@ services:
       #      KAFKA_CLUSTERS_SCHEMAREGISTRY: http://schema-registry:8081
       DYNAMIC_CONFIG_ENABLED: 'true'
 
-  #  zipkin:
-  #    image: openzipkin/zipkin
-  #    ports:
-  #      - "9411:9411"
-
-  loki:
-    image: grafana/loki:main
-    container_name: loki
-    command: [ "-config.file=/etc/loki/local-config.yaml" ]
-    ports:
-      - "3100:3100"
-
-  tempo:
-    image: grafana/tempo
-    command: [ "-config.file=/etc/tempo.yaml" ]
-    volumes:
-      - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
-      - tempo_data:/tmp/tempo
-    ports:
-      - "3200:3200"  # Tempo
-      - "9411:9411" # zipkin
-
-  prometheus:
-    image: prom/prometheus
-    command:
-      - --enable-feature=exemplar-storage
-      - --config.file=/etc/prometheus/prometheus.yml
-    volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    ports:
-      - "9090:9090"
-
-  grafana:
-    image: grafana/grafana
-    volumes:
-      - ./docker/grafana:/etc/grafana/provisioning/datasources:ro
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=password
-    ports:
-      - "3000:3000"
-
 volumes:
-  mongodb_data:
-  mysql_data:
-  tempo_data:
+  mysql:
+  mongodb:

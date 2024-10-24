@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: chensoul/new-product-service:latest
+          image: chensoul/sb3mc-product-service:latest
           env:
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
@@ -41,12 +41,12 @@ spec:
     app: product-service
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 8084
+      targetPort: 8084
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: product-service-config
 data:
-  SPRING_DATA_MONGODB_URI: "mongodb://root:password@mongodb.default.svc.cluster.local:27017/product-service?authSource=admin"
+  SPRING_DATA_MONGODB_URI: "mongodb://user:pass@mongodb.default.svc.cluster.local:27017/product_service?authSource=admin"

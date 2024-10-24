@@ -1,31 +1,21 @@
+server:
+  port: 8084
+
 spring:
   application:
     name: product-service
   data:
     mongodb:
-      uri: mongodb://root:password@localhost:27017/product_service?authSource=admin
+      uri: mongodb://user:pass@localhost:27017/product_service?authSource=admin
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-  api-docs:
-    path: /api-docs
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, metrics, prometheus
-  metrics:
-    distribution:
-      percentiles-histogram:
-        http:
-          server:
-            requests: true
-  observations:
-    key-values:
-      application: product-service
-  tracing:
-    sampling:
-      probability: 1.0
-loki:
-  url: http://localhost:3100/loki/api/v1/push
+management.endpoint.health.show-details: "ALWAYS"
+management.endpoints.web.exposure.include: "*"
+management.endpoint.health.probes.enabled: true
+management.metrics.tags.application: ${spring.application.name}
+management.metrics.distribution.percentiles-histogram.http.server.requests: true
+management.observations.key-values.application: ${spring.application.name}
+
+management.tracing.sampling.probability: 1.0
+
+loki.url: http://localhost:3100/loki/api/v1/push
+

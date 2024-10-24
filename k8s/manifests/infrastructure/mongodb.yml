@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo:7
+          image: mongo:8.0.1
           ports:
             - containerPort: 27017
           env:
@@ -55,7 +55,7 @@ spec:
 ---
 apiVersion: v1
 data:
-  MONGO_INITDB_ROOT_PASSWORD: cGFzc3dvcmQ=
+  MONGO_INITDB_ROOT_PASSWORD: cGFzcwo=
 kind: Secret
 metadata:
   name: mongodb-secrets
@@ -89,5 +89,5 @@ kind: ConfigMap
 metadata:
   name: mongodb-config
 data:
-  MONGO_INITDB_ROOT_USERNAME: "root"
-  MONGO_INITDB_DATABASE: "product-service"
+  MONGO_INITDB_ROOT_USERNAME: "user"
+  MONGO_INITDB_DATABASE: "microservices"

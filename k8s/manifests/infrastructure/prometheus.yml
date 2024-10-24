@@ -58,7 +58,7 @@ data:
       - job_name: 'product-service'
         metrics_path: '/actuator/prometheus'
         static_configs:
-          - targets: ['product-service.default.svc.cluster.local:8080'] ## only for demo purposes don't use host.docker.internal in production
+          - targets: ['product-service.default.svc.cluster.local:8084'] ## only for demo purposes don't use host.docker.internal in production
             labels:
               application: 'Product Service'
       - job_name: 'order-service'

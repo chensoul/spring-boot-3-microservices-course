@@ -1,0 +1,32 @@
+services:
+  api-gateway:
+    image: chensoul/sb3mc-api-gateway
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  product-service:
+    image: chensoul/sb3mc-product-service
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  order-service:
+    image: chensoul/sb3mc-order-service
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  inventory-service:
+    image: chensoul/sb3mc-inventory-service
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  notification-service:
+    image: chensoul/sb3mc-notification-service
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: inventory-service
-          image: chensoul/new-inventory-service:latest
+          image: chensoul/sb3mc-inventory-service:latest
           env:
             - name: SPRING_DATASOURCE_URL
               valueFrom:
@@ -49,4 +49,4 @@ kind: ConfigMap
 metadata:
   name: inventory-service-config
 data:
-  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql.default.svc.cluster.local:3306/inventory_service"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql.default.svc.cluster.local:3306/microservices"

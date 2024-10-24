@@ -14,9 +14,9 @@
     <packaging>pom</packaging>
 
     <name>spring-boot-3-microservices-course</name>
+    <description>spring-boot-3-microservices-course</description>
 
     <modules>
-        <module>authorization</module>
         <module>api-gateway</module>
         <module>product-service</module>
         <module>order-service</module>
@@ -34,21 +34,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <image>
-                        <name>chensoul/new-${project.artifactId}</name>
-                        <env>
-                            <!-- Make sure `mvn spring-boot:build-image` uses the Java version defined in this project -->
-                            <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
-                        </env>
-                    </image>
-                    <docker>
-                        <publishRegistry>
-                            <username>${docker.publishRegistry.username}</username>
-                            <password>${docker.publishRegistry.password}</password>
-                        </publishRegistry>
-                    </docker>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -56,6 +41,20 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.4</version>
+                <configuration>
+                    <to>
+                        <image>${env.USER}/sb3mc-${project.artifactId}</image>
+                    </to>
+                    <from>
+                        <image>eclipse-temurin:21-jre</image>
+                    </from>
+                </configuration>
             </plugin>
         </plugins>
     </build>
