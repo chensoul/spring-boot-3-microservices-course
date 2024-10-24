@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: chensoul/sb3mc-product-service:latest
+          image: chensoul/sb3mc-product-service
+          imagePullPolicy: Always
           env:
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
@@ -49,4 +50,4 @@ kind: ConfigMap
 metadata:
   name: product-service-config
 data:
-  SPRING_DATA_MONGODB_URI: "mongodb://user:pass@mongodb.default.svc.cluster.local:27017/product_service?authSource=admin"
+  SPRING_DATA_MONGODB_URI: "mongodb://user:pass@mongodb:27017/product_service?authSource=admin"

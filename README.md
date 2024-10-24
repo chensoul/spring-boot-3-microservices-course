@@ -58,10 +58,10 @@ Make sure you have the following installed on your machine:
 
 ### Start Kind Cluster
 
-Run the k8s/kind/create-kind-cluster.sh script to create the kind Kubernetes cluster
+Run the k8s/kind/create-cluster.sh script to create the kind Kubernetes cluster
 
 ```shell
-./k8s/kind/create-kind-cluster.sh
+./k8s/kind/create-cluster.sh
 ```
 
 This will create a kind cluster and pre-load all the required docker images into the cluster, this will save you time
@@ -97,4 +97,12 @@ To access the Grafana dashboards, you need to port-forward the grafana service t
 
 ```shell
 kubectl port-forward svc/grafana 3000:3000
+```
+
+### Delete Kind Cluster
+
+Run the k8s/kind/create-cluster.sh script to create the kind Kubernetes cluster
+
+```shell
+./k8s/kind/delete-cluster.sh
 ```

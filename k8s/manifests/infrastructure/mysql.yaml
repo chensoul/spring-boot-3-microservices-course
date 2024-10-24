@@ -25,6 +25,11 @@ spec:
                 secretKeyRef:
                   key: MYSQL_ROOT_PASSWORD
                   name: mysql-secrets
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_DATABASE
+                  name: mysql-config
       volumes:
         - name: mysql-data
           persistentVolumeClaim:
@@ -48,7 +53,7 @@ spec:
 ---
 apiVersion: v1
 data:
-  MYSQL_ROOT_PASSWORD: cGFzcwo=
+  MYSQL_ROOT_PASSWORD: cGFzcw==
 kind: Secret
 metadata:
   name: mysql-secrets
@@ -77,3 +82,10 @@ spec:
   resources:
     requests:
       storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  MYSQL_DATABASE: "microservices"

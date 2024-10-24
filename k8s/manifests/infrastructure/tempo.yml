@@ -60,16 +60,16 @@ data:
   tempo.yaml: |
     server:
       http_listen_port: 3200
-    
+
     distributor:
       receivers:
         zipkin:
-    
+
     storage:
       trace:
         backend: local
         local:
-          path: /tmp/tempo/blocks
+          path: /tmp/tempo
 ---
 apiVersion: v1
 kind: PersistentVolume

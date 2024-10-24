@@ -60,3 +60,22 @@ resilience4j:
 inventory:
   service:
     url: http://localhost:8082
+
+
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080
+
+spring.datasource.url: jdbc:mysql://mysql:3306/microservices
+
+spring.kafka.bootstrap-servers: kafka:9092
+
+spring.kafka.producer.properties.schema.registry.url: http://schema-registry:8085
+
+management.zipkin.tracing.endpoint: http://tempo:9411/api/v2/spans
+
+loki.url: http://loki:3100/loki/api/v1/push
+
+inventory.service.url: http://inventory-service:8082

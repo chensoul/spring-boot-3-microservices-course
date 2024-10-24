@@ -53,15 +53,15 @@ kind: ConfigMap
 metadata:
   name: grafana-configmap
 data:
-  GF_SECURITY_ADMIN_USER: "admin"
-  GF_SECURITY_ADMIN_PASSWORD: "password"
+  GF_SECURITY_ADMIN_USER: "user"
+  GF_SECURITY_ADMIN_PASSWORD: "pass"
   datasource.yml: |
     apiVersion: 1
     datasources:
       - name: Prometheus
         type: prometheus
         access: proxy
-        url: http://prometheus.default.svc.cluster.local:9090
+        url: http://prometheus:9090
         editable: false
         jsonData:
           httpMethod: POST
@@ -72,7 +72,7 @@ data:
         type: tempo
         access: proxy
         orgId: 1
-        url: http://tempo.default.svc.cluster.local:3200
+        url: http://tempo:3200
         basicAuth: false
         isDefault: true
         version: 1
@@ -90,7 +90,7 @@ data:
         uid: loki
         access: proxy
         orgId: 1
-        url: http://loki.default.svc.cluster.local:3100
+        url: http://loki:3100
         basicAuth: false
         isDefault: false
         version: 1

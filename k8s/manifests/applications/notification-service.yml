@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: chensoul/sb3mc-notification-service:latest
+          image: chensoul/sb3mc-notification-service
+          imagePullPolicy: Always
           env:
             - name: SPRING_KAFKA_BOOTSTRAP-SERVERS
               valueFrom:
@@ -54,4 +55,4 @@ kind: ConfigMap
 metadata:
   name: notification-service-config
 data:
-  SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL: "http://schema-registry.default.svc.cluster.local:8081"
+  SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
