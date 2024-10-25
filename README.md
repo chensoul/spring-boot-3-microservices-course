@@ -22,12 +22,13 @@ You can watch the tutorial on Youtube [here](https://youtu.be/yn_stY3HCr8?si=Ejr
 * Creating Aggregated Swagger Documentation at API Gateway
 * Database Persistence using Spring Data JPA, MySQL, Mongodb, Flyway
 * Distributed Tracing using Zipkin
+* Distributed Logging using Loki
 * Event Driven Async Communication using Spring Kafka and avro
 * Implementing API Gateway using Spring Cloud Gateway
 * Implementing Resiliency using Resilience4j
 * Using WebClient, Declarative HTTP Interfaces to invoke other APIs
 * Local Development Setup using Docker, Docker Compose and Testcontainers
-* Monitoring & Observability using Grafana, Prometheus, Loki, Tempo
+* Monitoring & Observability using Grafana, Prometheus, Tempo
 * Testing using JUnit 5, RestAssured, Testcontainers, Awaitility, WireMock
 * Deployment to Kubernetes using Kind
 
